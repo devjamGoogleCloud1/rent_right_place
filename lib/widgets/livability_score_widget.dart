@@ -1,25 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart'; // 匯入 LatLng
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class LivabilityScoreWidget extends StatelessWidget {
-  final ScrollController? scrollController; // Added scrollController
-  final LatLng position; // 新增 position 參數
-  final String? address; // 新增 address 參數
+  final ScrollController? scrollController;
+  final LatLng position;
+  final String? address;
+  final double transportationScore; // Added transportationScore
+  final double medicalScore;      // Added medicalScore
 
   const LivabilityScoreWidget({
     super.key,
-    this.scrollController, // Updated constructor
-    required this.position, // 將 position 設為必要參數
-    this.address, // address 為可選參數
+    this.scrollController,
+    required this.position,
+    this.address,
+    required this.transportationScore, // Made required
+    required this.medicalScore,      // Made required
   });
 
-  // Placeholder data for categories
-  final List<Map<String, dynamic>> categories = const [
-    {'name': '交通友善', 'score': 4, 'maxScore': 5, 'icon': Icons.directions_bus},
-    {'name': '生活便利', 'score': 4, 'maxScore': 5, 'icon': Icons.storefront},
-    {'name': '健康醫療', 'score': 4, 'maxScore': 5, 'icon': Icons.local_hospital},
-    {'name': '風險安全', 'score': 4, 'maxScore': 5, 'icon': Icons.security},
-  ];
+  // Updated to use passed scores
+  List<Map<String, dynamic>> get categories => [
+        {
+          'name': '交通友善',
+          'score': (transportationScore / 20).round(), // Assuming max score 100, scale to 0-5
+          'maxScore': 5,
+          'icon': Icons.directions_bus,
+          'details': '捷運站點親近性評分: ${transportationScore.toStringAsFixed(1)} / 100'
+        },
+        {'name': '生活便利', 'score': 4, 'maxScore': 5, 'icon': Icons.storefront, 'details': '此為範例資料'},
+        {
+          'name': '健康醫療',
+          'score': medicalScore.round(), // Assuming medicalScore is already 0-5
+          'maxScore': 5,
+          'icon': Icons.local_hospital,
+          'details': '鄰近醫療設施評分: ${medicalScore.toStringAsFixed(1)} / 5'
+        },
+        {'name': '風險安全', 'score': 4, 'maxScore': 5, 'icon': Icons.security, 'details': '此為範例資料'},
+      ];
 
   // Placeholder data for nearby properties
   final List<Map<String, dynamic>> nearbyProperties = const [
@@ -37,106 +53,78 @@ class LivabilityScoreWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // You can now use widget.position and widget.address here
-    // For example, to display the address:
-    // Text(address ?? 'N/A', style: TextStyle(fontSize: 12, color: Colors.grey)),
-    // const SizedBox(height: 10.0),
-
-    // This is the core UI from LivabilityScoreScreen, without Scaffold/AppBar
     return SingleChildScrollView(
-      controller: scrollController, // Use the passed scrollController
+      controller: scrollController,
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // --- Drag Handle ---
-          Center(
-            child: Container(
-              width: 40,
-              height: 5,
-              margin: const EdgeInsets.only(
-                bottom: 10.0,
-              ), // Add some space below the handle
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(10),
+          if (address != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4.0),
+              child: Text(
+                address!,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
+          Text(
+            '緯度: ${position.latitude.toStringAsFixed(5)}, 經度: ${position.longitude.toStringAsFixed(5)}',
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
           ),
-          // --- Score Section ---
-          Center(
-            child: Column(
-              children: [
-                Text(
-                  '88/100', // Placeholder, will be dynamic
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    // Changed from headlineSmall
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-                const Text(
-                  '綜合宜居分數',
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-              ],
-            ),
+          const SizedBox(height: 15.0),
+          const Text(
+            '宜居評分',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 20.0),
-
-          // --- Categories Section ---
-          Text('評分詳情', style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 8.0),
+          const SizedBox(height: 10.0),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: 2.2, // Adjusted for potentially smaller space
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
+              crossAxisSpacing: 10.0,
+              mainAxisSpacing: 10.0,
+              childAspectRatio: 1.5, // Adjusted for better layout
             ),
             itemCount: categories.length,
             itemBuilder: (context, index) {
               final category = categories[index];
               return Card(
-                elevation: 1,
+                elevation: 2.0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(12.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Icon(
-                            category['icon'] as IconData,
-                            color: Theme.of(context).primaryColor,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              category['name'] as String,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4), // 將高度從 6 調整為 4
+                      Icon(category['icon'], color: Colors.green[700], size: 28),
+                      const SizedBox(height: 8.0),
                       Text(
-                        '${category['score']}/${category['maxScore']}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[700],
-                        ), // Increased font size from 13 to 14
+                        category['name'],
+                        style: const TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 4.0),
+                      Row(
+                        children: List.generate(category['maxScore'], (i) {
+                          return Icon(
+                            i < category['score']
+                                ? Icons.star
+                                : Icons.star_border,
+                            color: Colors.amber,
+                            size: 18,
+                          );
+                        }),
+                      ),
+                      const SizedBox(height: 4.0),
+                      Text(
+                        category['details'] ?? '', // Display details
+                        style: const TextStyle(fontSize: 10, color: Colors.blueGrey),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
                       ),
                     ],
                   ),
@@ -145,10 +133,11 @@ class LivabilityScoreWidget extends StatelessWidget {
             },
           ),
           const SizedBox(height: 20.0),
-
-          // --- Nearby Properties Section ---
-          Text('附近物件', style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 8.0),
+          const Text(
+            '附近房源推薦',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10.0),
           ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -156,86 +145,49 @@ class LivabilityScoreWidget extends StatelessWidget {
             itemBuilder: (context, index) {
               final property = nearbyProperties[index];
               return Card(
-                elevation: 2,
-                margin: const EdgeInsets.symmetric(vertical: 6.0),
+                elevation: 2.0,
+                margin: const EdgeInsets.symmetric(vertical: 8.0),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(12.0),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
                         width: 80,
                         height: 80,
                         decoration: BoxDecoration(
-                          color: property['imagePlaceholder'] as Color,
-                          borderRadius: BorderRadius.circular(6),
+                          color: property['imagePlaceholder'],
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
-                        child: const Icon(
-                          Icons.house_rounded,
-                          color: Colors.white,
-                          size: 40,
-                        ),
+                        // child: Icon(Icons.house_rounded, size: 40, color: Colors.white70),
                       ),
-                      const SizedBox(width: 10.0),
+                      const SizedBox(width: 12.0),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              property['title'] as String,
-                              style: Theme.of(context).textTheme.titleSmall
-                                  ?.copyWith(fontWeight: FontWeight.bold),
+                              property['title'],
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 4.0),
-                            ...(property['features'] as List<String>)
-                                .map(
-                                  (feature) => Padding(
-                                    padding: const EdgeInsets.only(bottom: 1.0),
-                                    child: Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.check_circle_outline,
-                                          size: 12,
-                                          color: Colors.green,
+                            Wrap(
+                              spacing: 6.0,
+                              runSpacing: 4.0,
+                              children: (property['features'] as List<String>)
+                                  .map((feature) => Chip(
+                                        label: Text(feature, style: const TextStyle(fontSize: 10)),
+                                        padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
+                                        backgroundColor: Colors.lightGreen[100],
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10.0),
+                                          side: BorderSide(color: Colors.green[200]!)
                                         ),
-                                        const SizedBox(width: 3),
-                                        Expanded(
-                                          child: Text(
-                                            feature,
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                            const SizedBox(height: 6.0),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  print('View property: ${property['title']}');
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  textStyle: const TextStyle(fontSize: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                ),
-                                child: const Text('查看'),
-                              ),
+                                      ))
+                                  .toList(),
                             ),
                           ],
                         ),
