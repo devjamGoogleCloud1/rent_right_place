@@ -11,7 +11,7 @@ plugins {
 android {
     namespace = "com.example.rent_right_place"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

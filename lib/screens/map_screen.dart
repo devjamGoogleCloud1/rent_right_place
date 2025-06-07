@@ -1,6 +1,5 @@
-import 'dart:convert'; // Keep for potential future use, though direct JSON processing is moved
-import 'package:flutter/services.dart'
-    show rootBundle; // Keep for potential future use
+import 'package:flutter/services.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rent_right_place/services/medical_facility_service.dart';
@@ -10,11 +9,13 @@ import 'package:rent_right_place/widgets/livability_score_widget.dart';
 class MapScreen extends StatefulWidget {
   final LatLng initialPosition;
   final String? searchAddress;
+  final bool filterRentable; // 新增篩選可租房屋的參數
 
   const MapScreen({
     super.key,
     required this.initialPosition,
     this.searchAddress,
+    this.filterRentable = false, // 預設為顯示所有房屋
   });
 
   @override
@@ -71,9 +72,9 @@ class MapScreenState extends State<MapScreen> {
         setState(() {
           _hospitalMarkers = medicalData['hospitalMarkers'] ?? {};
           _medicalScore = medicalData['medicalScore']?.toDouble() ?? 0.0;
-          print(
-            "Medical Score: $_medicalScore, Hospital Markers: ${_hospitalMarkers.length}",
-          );
+          // print(
+          //   "Medical Score: $_medicalScore, Hospital Markers: ${_hospitalMarkers.length}",
+          // );
         });
       }
     } catch (e, s) {

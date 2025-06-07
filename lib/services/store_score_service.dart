@@ -15,24 +15,26 @@ class StoreScoreService {
       double storeScore = 0.0;
       Set<Marker> storeMarkers = {};
 
+      // Updated scoring logic to calculate based on fixed distance ranges without considering the nearest store.
       for (var store in storeData) {
         final double? lat = store['lat'];
         final double? lon = store['lon'];
         if (lat == null || lon == null) continue;
 
         final LatLng storePosition = LatLng(lat, lon);
-
         final double distance = LocationUtils.calculateDistanceInMeters(
           currentPosition,
           storePosition,
         );
 
-        if (distance <= 500) {
+        if (distance <= 10) {
           storeScore += 5;
-        } else if (distance <= 1000) {
+        } else if (distance <= 50) {
           storeScore += 3;
-        } else if (distance <= 2000) {
+        } else if (distance <= 200) {
           storeScore += 1;
+        } else {
+          storeScore += 0;
         }
 
         storeMarkers.add(

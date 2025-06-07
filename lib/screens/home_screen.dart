@@ -3,6 +3,7 @@ import 'package:flutter/services.dart'; // 新增這行來引用 PlatformExcepti
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'map_screen.dart'; // 引用新的地圖畫面
+import 'rentable_map_screen.dart'; // 引用可租房屋地圖畫面
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -206,6 +207,19 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: _navigateToDefaultMap, // 按下時呼叫新的方法
               child: const Text('查看預設地圖'),
             ),
+            const SizedBox(height: 10), // 在按鈕間增加一些間距
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        RentableMapScreen(initialPosition: _defaultMapCenter),
+                  ),
+                );
+              },
+              child: const Text('查看可租房屋地圖'),
+            ),
           ],
         ),
       ),
@@ -216,5 +230,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _addressController.dispose();
     super.dispose();
+  }
+}
+
+class HomeScreenWrapper extends StatelessWidget {
+  const HomeScreenWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const HomeScreen();
   }
 }
