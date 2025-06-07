@@ -49,3 +49,6 @@ lib/firebase_options.dart
 
 # Google Services JSON
 android/app/google-services.json
+
+# Node.js modules
+node_modules/
