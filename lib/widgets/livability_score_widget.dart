@@ -29,10 +29,10 @@ class LivabilityScoreWidget extends StatelessWidget {
     },
     {
       'name': '生活便利',
-      'score': 4,
+      'score': transportationScore.round(), // Updated to use actual score
       'maxScore': 5,
       'icon': Icons.storefront,
-      'details': '此為範例資料',
+      'details': '超商便利性評分: ${transportationScore.toStringAsFixed(1)} / 5',
     },
     {
       'name': '健康醫療',
@@ -121,9 +121,13 @@ class LivabilityScoreWidget extends StatelessWidget {
                     children: [
                       Icon(
                         category['icon'],
-                        color: Colors.green[700],
+                        color: category['name'] == '生活便利'
+                            ? Colors.orange[700]
+                            : category['name'] == '健康醫療'
+                            ? const Color.fromARGB(255, 33, 30, 30)
+                            : Colors.green[700],
                         size: 24,
-                      ), // Reduced icon size
+                      ), // Updated icon colors for different categories
                       const SizedBox(height: 6.0),
                       Text(
                         category['name'],

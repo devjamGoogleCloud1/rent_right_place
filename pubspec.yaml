@@ -24,3 +24,5 @@ flutter:
   assets:
     - assets/TpeMrtStations_TWD97_FIDCODE.json
     - assets/taipei_medical_facilities.json # Added this line
+    - assets/family_store.json
+

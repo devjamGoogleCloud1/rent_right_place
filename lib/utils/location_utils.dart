@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geocoding/geocoding.dart';
 
 class LocationUtils {
   // 計算兩個 WGS84 經緯度點之間的距離（單位：公尺），使用 Haversine 公式
@@ -21,5 +22,18 @@ class LocationUtils {
     double c = 2 * atan2(sqrt(a), sqrt(1 - a));
 
     return earthRadius * c;
+  }
+
+  // Geocode an address to LatLng using the geocoding package
+  static Future<LatLng?> geocodeAddress(String address) async {
+    try {
+      List<Location> locations = await locationFromAddress(address);
+      if (locations.isNotEmpty) {
+        return LatLng(locations.first.latitude, locations.first.longitude);
+      }
+    } catch (e) {
+      print('Error geocoding address: $e');
+    }
+    return null;
   }
 }
