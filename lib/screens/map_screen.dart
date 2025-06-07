@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rent_right_place/utils/location_utils.dart';
 import 'package:proj4dart/proj4dart.dart';
+import 'package:rent_right_place/widgets/livability_score_widget.dart';
 
 class MapScreen extends StatefulWidget {
   final LatLng initialPosition;
@@ -239,6 +240,36 @@ class MapScreenState extends State<MapScreen> {
             circles: _circles,
             zoomControlsEnabled: true,
             padding: const EdgeInsets.only(bottom: 180.0),
+          ),
+          // Added DraggableScrollableSheet with LivabilityScoreWidget
+          DraggableScrollableSheet(
+            initialChildSize: 0.2,
+            minChildSize: 0.1,
+            maxChildSize: 0.9,
+            builder: (BuildContext context, ScrollController scrollController) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    topRight: Radius.circular(20.0),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: LivabilityScoreWidget(
+                  scrollController: scrollController,
+                  position: _currentPosition,
+                  address: widget.searchAddress,
+                ),
+              );
+            },
           ),
         ],
       ),
