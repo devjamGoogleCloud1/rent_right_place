@@ -12,16 +12,31 @@ class MapScreen extends StatefulWidget {
 
 class MapScreenState extends State<MapScreen> {
   late LatLng _currentPosition;
+  final Set<Marker> _markers = {};
 
   @override
   void initState() {
     super.initState();
     _currentPosition = widget.initialPosition;
+    // 在地圖初始化時，使用 initialPosition 新增一個標記
+    _addMarker(_currentPosition, "搜尋的位置");
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void _addMarker(LatLng position, String title) {
+    setState(() {
+      _markers.add(
+        Marker(
+          markerId: MarkerId(title),
+          position: position,
+          infoWindow: InfoWindow(title: title),
+        ),
+      );
+    });
   }
 
   @override
@@ -36,6 +51,7 @@ class MapScreenState extends State<MapScreen> {
           target: _currentPosition,
           zoom: 15.0,
         ),
+        markers: _markers,
       ),
     );
   }
