@@ -103,9 +103,10 @@ class MapScreenState extends State<MapScreen> {
             ), // To avoid overlap with DraggableScrollableSheet
           ),
           DraggableScrollableSheet(
-            initialChildSize: 0.2,
-            minChildSize: 0.1,
-            maxChildSize: 0.9,
+            initialChildSize:
+                0.3, // Adjusted initial size to 30% of screen height
+            minChildSize: 0.2, // Adjusted minimum size to 20%
+            maxChildSize: 0.6, // Adjusted maximum size to 60%
             builder: (BuildContext context, ScrollController scrollController) {
               return Container(
                 decoration: BoxDecoration(
