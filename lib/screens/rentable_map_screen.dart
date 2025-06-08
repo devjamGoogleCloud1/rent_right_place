@@ -45,12 +45,47 @@ class _RentableMapScreenState extends State<RentableMapScreen> {
         title: const Text('可租房屋地圖'),
         backgroundColor: Colors.green,
       ),
-      body: GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: widget.initialPosition,
-          zoom: 14.0,
-        ),
-        markers: _rentableMarkers,
+      body: Stack(
+        children: [
+          GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: widget.initialPosition,
+              zoom: 14.0,
+            ),
+            markers: _rentableMarkers,
+          ),
+          Positioned(
+            bottom: 20,
+            left: 20,
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '宜居評分: 85', // Replace with dynamic score
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

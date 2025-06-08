@@ -25,7 +25,7 @@ class LivabilityScoreWidget extends StatelessWidget {
           .round(), // Assuming max score 100, scale to 0-5
       'maxScore': 5,
       'icon': Icons.directions_bus,
-      'details': '捷運站點親近性評分: ${transportationScore.toStringAsFixed(1)} / 100',
+      'details': '捷運站點親近評分: ${transportationScore.toStringAsFixed(1)} / 5',
     },
     {
       'name': '生活便利',
@@ -46,12 +46,32 @@ class LivabilityScoreWidget extends StatelessWidget {
       'score': 4,
       'maxScore': 5,
       'icon': Icons.security,
-      'details': '此為範例資料',
+      'details': '自然災害安全評分: 4 / 5',
     },
   ];
 
   // Placeholder data for nearby properties
   final List<Map<String, dynamic>> nearbyProperties = const [
+    {
+      'imagePlaceholder': Colors.blueGrey,
+      'title': '花雕雞別墅',
+      'features': ['電梯', '消防友善', '電視'],
+    },
+    {
+      'imagePlaceholder': Colors.teal,
+      'title': '溫馨小套房',
+      'features': ['近捷運', '採光佳', '有陽台'],
+    },
+    {
+      'imagePlaceholder': Colors.blueGrey,
+      'title': '花雕雞別墅',
+      'features': ['電梯', '消防友善', '電視'],
+    },
+    {
+      'imagePlaceholder': Colors.teal,
+      'title': '溫馨小套房',
+      'features': ['近捷運', '採光佳', '有陽台'],
+    },
     {
       'imagePlaceholder': Colors.blueGrey,
       'title': '花雕雞別墅',
@@ -72,27 +92,34 @@ class LivabilityScoreWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (address != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4.0),
-              child: Text(
-                address!,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          Text(
-            '緯度: ${position.latitude.toStringAsFixed(5)}, 經度: ${position.longitude.toStringAsFixed(5)}',
-            style: const TextStyle(fontSize: 12, color: Colors.grey),
-          ),
-          const SizedBox(height: 15.0),
+          const SizedBox(height: 8.0), // Reduced from 15.0
           const Text(
-            '宜居評分',
+            '租得好評分',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 10.0),
+          // Inserted score display
+          Center(
+            // Center the Padding widget
+            child: Padding(
+              padding: const EdgeInsets.only(
+                top: 4.0,
+                bottom: 4.0,
+              ), // Reduced bottom from 8.0
+              child: Text(
+                // Note: 'transportationScore' here is actually the storeScore from MapScreen
+                '${(0.2 * medicalScore + 0.4 * transportationScore + 0.1 * 4 + 0.3 * 4).toStringAsFixed(1)}',
+                style: const TextStyle(
+                  fontSize: 66, // Increased font size
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent, // Example color, adjust as needed
+                ),
+                textAlign:
+                    TextAlign.center, // Center the text within the Text widget
+              ),
+            ),
+          ),
+          //Here
+          const SizedBox(height: 5.0), // Changed from 10.0 to 5.0
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),

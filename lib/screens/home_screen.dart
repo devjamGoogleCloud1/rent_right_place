@@ -169,58 +169,110 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('租屋風險評估'),
-        backgroundColor: Colors.blueAccent,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _addressController,
-              decoration: const InputDecoration(
-                labelText: '輸入地址搜尋',
-                border: OutlineInputBorder(),
-                suffixIcon: Icon(Icons.search),
+      // appBar: AppBar(
+      //   title: const Text('租屋風險評估'),
+      //   backgroundColor: Colors.blueAccent,
+      // ),
+      body: Center(
+        // Center the content
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center, // Vertically center
+            crossAxisAlignment:
+                CrossAxisAlignment.center, // Horizontally center
+            children: [
+              // Product Logo Name
+              const Text(
+                '租得好',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                ),
               ),
-              onSubmitted: (value) =>
-                  _isLoading ? null : _searchAndNavigate(), // 載入中禁用
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _isLoading ? null : _searchAndNavigate, // 載入中禁用按鈕
-              child: _isLoading
-                  ? const SizedBox(
-                      // 讓 CircularProgressIndicator 有固定大小
-                      height: 20.0,
-                      width: 20.0,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.0,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Text('搜尋地圖位置'),
-            ),
-            const SizedBox(height: 10), // 在按鈕間增加一些間距
-            ElevatedButton(
-              onPressed: _navigateToDefaultMap, // 按下時呼叫新的方法
-              child: const Text('查看預設地圖'),
-            ),
-            const SizedBox(height: 10), // 在按鈕間增加一些間距
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        RentableMapScreen(initialPosition: _defaultMapCenter),
+              // Product Slogan
+              const Padding(
+                padding: EdgeInsets.only(top: 8.0, bottom: 24.0),
+                child: Text(
+                  '讓租屋更安心，讓決策更簡單',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              ),
+              TextField(
+                controller: _addressController,
+                decoration: InputDecoration(
+                  labelText: '輸入地址搜尋',
+                  border: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    // Make search icon functional
+                    icon: const Icon(Icons.search),
+                    onPressed: _isLoading ? null : _searchAndNavigate,
                   ),
-                );
-              },
-              child: const Text('查看可租房屋地圖'),
-            ),
-          ],
+                ),
+                onSubmitted: (value) =>
+                    _isLoading ? null : _searchAndNavigate(), // 載入中禁用
+              ),
+              const SizedBox(height: 20),
+              // ElevatedButton(
+              //   onPressed: _isLoading ? null : _searchAndNavigate, // 載入中禁用按鈕
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: Colors.blueAccent, // Theme color
+              //     minimumSize: const Size(
+              //       double.infinity,
+              //       36,
+              //     ), // Make button wider
+              //   ),
+              //   child: _isLoading
+              //       ? const SizedBox(
+              //           // 讓 CircularProgressIndicator 有固定大小
+              //           height: 20.0,
+              //           width: 20.0,
+              //           child: CircularProgressIndicator(
+              //             strokeWidth: 2.0,
+              //             color: Colors.white,
+              //           ),
+              //         )
+              //       : const Text('搜尋地圖位置', style: TextStyle(color: Colors.white)),
+              // ),
+              // const SizedBox(height: 10), // 在按鈕間增加一些間距
+              // ElevatedButton(
+              //   onPressed: _navigateToDefaultMap, // 按下時呼叫新的方法
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: Colors.blueAccent, // Theme color
+              //     minimumSize: const Size(
+              //       double.infinity,
+              //       36,
+              //     ), // Make button wider
+              //   ),
+              //   child: const Text('查看預設地圖', style: TextStyle(color: Colors.white)),
+              // ),
+              // const SizedBox(height: 10), // 在按鈕間增加一些間距
+              // ElevatedButton(
+              //   onPressed: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (context) =>
+              //             RentableMapScreen(initialPosition: _defaultMapCenter),
+              //       ),
+              //     );
+              //   },
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: Colors.blueAccent, // Theme color
+              //     minimumSize: const Size(
+              //       double.infinity,
+              //       36,
+              //     ), // Make button wider
+              //   ),
+              //   child: const Text(
+              //     '查看可租房屋地圖',
+              //     style: TextStyle(color: Colors.white),
+              //   ),
+              // ),
+            ],
+          ),
         ),
       ),
     );

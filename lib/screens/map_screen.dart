@@ -27,6 +27,7 @@ class MapScreenState extends State<MapScreen> {
   final Set<Marker> _markers = {}; // For the main searched location marker
   Set<Marker> _hospitalMarkers = {}; // Added for hospital markers
   Set<Marker> _storeMarkers = {}; // Added for store markers
+  final Set<Circle> _circles = {}; // Added to hold circles
 
   // Scores
   double _medicalScore = 0.0;
@@ -46,6 +47,7 @@ class MapScreenState extends State<MapScreen> {
     _storeScoreService = StoreScoreService();
     print("MapScreen initState: Current Position = $_currentPosition");
     _addMarker(_currentPosition, widget.searchAddress ?? "搜尋的位置");
+    _addCircle(_currentPosition); // Call method to add circle
     _loadMedicalFacilities();
     _loadStoreData(); // Load store data
   }
@@ -62,6 +64,22 @@ class MapScreenState extends State<MapScreen> {
     });
   }
 
+  // Method to add a circle
+  void _addCircle(LatLng position) {
+    setState(() {
+      _circles.add(
+        Circle(
+          circleId: const CircleId("current_location_circle"),
+          center: position,
+          radius: 500, // 500 meters
+          fillColor: Colors.blue.withOpacity(0.3), // Semi-transparent blue
+          strokeColor: Colors.blue, // Blue border
+          strokeWidth: 1,
+        ),
+      );
+    });
+  }
+
   Future<void> _loadMedicalFacilities() async {
     print("_loadMedicalFacilities: Started for $_currentPosition");
 
@@ -70,7 +88,7 @@ class MapScreenState extends State<MapScreen> {
           .loadAndProcessFacilities();
       if (mounted) {
         setState(() {
-          _hospitalMarkers = medicalData['hospitalMarkers'] ?? {};
+          // _hospitalMarkers = medicalData['hospitalMarkers'] ?? {};
           _medicalScore = medicalData['medicalScore']?.toDouble() ?? 0.0;
           // print(
           //   "Medical Score: $_medicalScore, Hospital Markers: ${_hospitalMarkers.length}",
@@ -97,7 +115,7 @@ class MapScreenState extends State<MapScreen> {
       );
       if (mounted) {
         setState(() {
-          _storeMarkers = storeData['storeMarkers'] ?? {};
+          // _storeMarkers = storeData['storeMarkers'] ?? {};
           _storeScore = storeData['storeScore']?.toDouble() ?? 0.0;
         });
       }
@@ -116,8 +134,20 @@ class MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.searchAddress ?? '地圖位置'),
-        backgroundColor: Colors.green[700],
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              widget.searchAddress ?? '地圖位置',
+              style: const TextStyle(color: Colors.white),
+            ), // Changed text color to white
+            // Text(
+            //   '宜居評分: ${(0.3 * _medicalScore + 0.3 * _storeScore).toStringAsFixed(1)}', // Use same weighted calculation
+            //   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            // ),
+          ],
+        ),
+        backgroundColor: Colors.blueAccent[700], // Changed to blueAccent[700]
       ),
       body: Stack(
         children: [
@@ -129,6 +159,7 @@ class MapScreenState extends State<MapScreen> {
             markers: _markers
                 .union(_hospitalMarkers)
                 .union(_storeMarkers), // Combined all markers
+            circles: _circles, // Display circles on the map
             zoomControlsEnabled: true,
             padding: const EdgeInsets.only(
               bottom: 180.0,
@@ -138,7 +169,7 @@ class MapScreenState extends State<MapScreen> {
             initialChildSize:
                 0.3, // Adjusted initial size to 30% of screen height
             minChildSize: 0.2, // Adjusted minimum size to 20%
-            maxChildSize: 0.6, // Adjusted maximum size to 60%
+            maxChildSize: 0.9, // Adjusted maximum size to 80%
             builder: (BuildContext context, ScrollController scrollController) {
               return Container(
                 decoration: BoxDecoration(
@@ -156,13 +187,31 @@ class MapScreenState extends State<MapScreen> {
                     ),
                   ],
                 ),
-                child: LivabilityScoreWidget(
-                  scrollController: scrollController,
-                  position: _currentPosition,
-                  address: widget.searchAddress,
-                  medicalScore: _medicalScore, // Pass medical score
-                  transportationScore:
-                      _storeScore, // Updated to pass store score
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Draggable tag
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 5,
+                        margin: const EdgeInsets.symmetric(vertical: 8.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: LivabilityScoreWidget(
+                        scrollController: scrollController,
+                        position: _currentPosition,
+                        address: widget.searchAddress,
+                        medicalScore: _medicalScore,
+                        transportationScore: _storeScore,
+                      ),
+                    ),
+                  ],
                 ),
               );
             },
